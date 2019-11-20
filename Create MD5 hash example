@@ -1,2 +1,8 @@
-  data := []byte(hashInput)
+  data := []byte(hashInput)                                   //returns [16]byte
   hashedOutput := md5.Sum(data)
+
+  (or)
+  
+  hasher := md5.New()                                         //returns string
+  hasher.Write([]byte(hashInput))
+  return hex.EncodeToString(hasher.Sum(nil))
