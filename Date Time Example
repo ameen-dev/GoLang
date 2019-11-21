@@ -1,0 +1,37 @@
+now := time.Now()
+fmt.Println("\nToday:", now)
+
+after := now.AddDate(1, 0, 0)
+fmt.Println("\nAdd 1 Year:", after)
+
+after = now.AddDate(0, 1, 0)
+fmt.Println("\nAdd 1 Month:", after)
+
+after = now.AddDate(0, 0, 1)
+fmt.Println("\nAdd 1 Day:", after)
+    
+------------------------------------------------------------------------------------------------------------------------------
+    
+ today := time.Now()
+ tomorrow := today.Add(24 * time.Hour)
+ sameday := tomorrow.Add(-24 * time.Hour)
+
+ b1 := today.Before(tomorrow)
+ fmt.Println("today before tomorrow:",b1)
+
+ b2 := tomorrow.After(today)
+ fmt.Println("tomorrow after today:",b2)
+
+ if today != tomorrow {
+   fmt.Println("today is not tomorrow")
+ }
+
+ if sameday == today {
+   fmt.Println("sameday is today")
+ }
+
+ if today.Equal(sameday) {
+    fmt.Println("today is sameday")
+ }
+   
+------------------------------------------------------------------------------------------------------------------------------
