@@ -1,0 +1,15 @@
+package main
+
+import (
+  "encoding/base64"
+  "fmt"
+)
+
+func main() {
+  encodedStr := base64.StdEncoding.EncodeToString([]byte("Hello there !!!"))
+  fmt.Println("Encoded string is : ", encodedStr)
+
+  decodedStr, _ := base64.StdEncoding.DecodeString(encodedStr)
+  fmt.Print("Decoded string is : ")
+  fmt.Printf("%q\n", decodedStr)
+}
