@@ -1,0 +1,230 @@
+func (d *QuerySpecs) QueryDatastore(id int64, name string) interface{} {
+  ctx := context.Background()
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, erro := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if erro != nil {
+    log.Fatalf("Failed to create GDS client: %v", erro)
+  }
+  //query := datastore.NewQuery(d.KindName).Filter("ID =", id).Filter("Name =", name).Order("ID").Limit(3)
+  query := datastore.NewQuery(d.KindName).Filter("ID =", id).Filter("Name =", name).Order("ID").Limit(3)
+
+  log.Println("the kind name was :", d.KindName)
+  log.Println("the Namespace name was :", d.Namespace)
+
+  entities := []publisher.MyEntity{}
+  it := client.Run(ctx, query)
+  for {
+    entity := publisher.MyEntity{}
+    result, err := it.Next(&entity)
+    log.Println("------------------------------------------------------------------last up 1 ",result)
+    log.Println("------------------------------------------------------------------last up 4 ",entity)
+    if err == iterator.Done {
+      break
+    }
+    if err != nil {
+      log.Fatalf("Error fetching next task: %v", err)
+    }
+    entities = append(entities, entity)
+  }
+  client.Close()
+  return entities
+}
+
+
+
+
+func (d *QuerySpecs) Update (keyword string) {
+  ctx := context.Background()
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, erro := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if erro != nil {
+    log.Fatalf("Failed to create GDS client: %v", erro)
+  }
+  k := datastore.NameKey("Entity", "stringID", nil)
+  e := new(publisher.MyEntity)
+  if err := client.Get(ctx, k, e); err != nil {
+    // Handle error.
+  }
+
+  old := e.Name
+  e.Name = "Changed Name"
+
+  if _, err := client.Put(ctx, k, e); err != nil {
+    // Handle error.
+  }
+  fmt.Printf("Updated value from %q to %q\n", old, e.Name)
+
+}
+
+
+
+
+
+func (d *QuerySpecs) Get1(id string) interface{} {
+  ctx := context.Background()
+
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, err := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if err != nil {
+    log.Fatalf("Failed to create GDS client: %v", err)
+  }
+
+  key := datastore.IncompleteKey(d.KindName, nil)
+  key.Namespace = utilities.ConfigValues.GDS_Default_Namespace
+  query := datastore.NewQuery("Mine").Filter("RegisterNumber =", "101")
+
+  log.Println("--------------------------------------------------------------------------------last before",)
+
+  it := client.Run(ctx, query)
+  for {
+    var task publisher.MyEntity
+    res, err := it.Next(&task)
+    if err == iterator.Done {
+      break
+    }
+    log.Println("--------------------------------------------------------------------------------last in",task)
+    log.Println("--------------------------------------------------------------------------------last out",res)
+
+    if err != nil {
+      log.Fatalf("Error fetching next task: %v", err)
+    }
+    log.Println("--------------------------------------------------------------------------------last up",task.Name, task.RegisterNumber)
+
+    fmt.Printf("Task %q, Priority %d\n", task.Name, task.RegisterNumber)
+  }
+  log.Println("--------------------------------------------------------------------------------last after",)
+
+  return nil
+}
+
+
+
+
+
+func (d *QuerySpecs) Get4(id string) interface{} {
+  ctx := context.Background()
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, erro := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if erro != nil {
+    log.Fatalf("Failed to create GDS client: %v", erro)
+  }
+  key := datastore.NameKey(d.KindName, "sister", nil)
+  key.Namespace = utilities.ConfigValues.GDS_Default_Namespace
+  var entity publisher.MyEntity
+
+  _, err := client.RunInTransaction(ctx, func(tx *datastore.Transaction) error {
+    if err := tx.Get(key, &entity); err != nil {
+      log.Println("error after 42", err)
+    }
+    return nil
+  })
+  log.Println("err", err)
+  return entity
+}
+
+
+
+
+
+
+ func (d *QuerySpecs) Get2(id string) interface{} {
+  var output publisher.MyEntity
+  var output2 publisher.MyEntity
+  ctx := context.Background()
+
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, err := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if err != nil {
+    log.Fatalf("Failed to create GDS client: %v", err)
+  }
+  key := datastore.NameKey(d.KindName, "abba", nil)
+  key.Namespace = utilities.ConfigValues.GDS_Default_Namespace
+  //var intKey int64 = 4759608476303360
+  log.Println("--------------------------------------------------------------------------------point002 1", key)
+  err2 := client.Get(ctx, key, &output)
+  log.Println("--------------------------------------------------------------------------------point002 2", err2)
+  log.Println("--------------------------------------------------------------------------------point002 3", output)
+  //var intKey int64 = 4759608476303360
+  key2 := datastore.IDKey("Mine", 6466613003943936, nil)
+  log.Println("--------------------------------------------------------------------------------point002 4", key2)
+  err3 := client.Get(ctx, key2, &output2)
+  log.Println("--------------------------------------------------------------------------------point002 5", err3)
+  q := datastore.NewQuery("Mine").Namespace("Working").Filter("name =", "brother").Limit(1)
+  d.ExecuteQuery(q, nil)
+  log.Println("--------------------------------------------------------------------------------point002 6", d.ExecuteQuery(q, nil))
+  return q
+}
+
+
+
+
+func DeleteEntity(entityId int64) error {
+  ctx := context.Background()
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, erro := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if erro != nil {
+    log.Fatalf("Failed to create GDS client: %v", erro)
+  }
+  return client.Delete(ctx, datastore.IDKey("Mine", entityId, nil))
+}
+
+
+
+
+
+
+func (d *QuerySpecs) Put(entity interface{}) interface{} {
+
+  log.Println("--------------------------------------------------------------------------------point000", entity)
+
+  ctx := context.Background()
+
+  authKey := keymaker.Allsecrets.GDSAuthKey
+  client, err := datastore.NewClient(ctx, utilities.ConfigValues.GDS_Project_ID, option.WithCredentialsJSON([]byte(authKey)))
+  if err != nil {
+    log.Fatalf("Failed to create GDS client: %v", err)
+  }
+
+  key := datastore.IncompleteKey(d.KindName, nil)
+  key.Namespace = utilities.ConfigValues.GDS_Default_Namespace
+
+  switch v := entity.(type) {
+  case publisher.MyEntity:
+    log.Println("*******************************************************************My Entity:", v)
+    var realEntity = entity.(publisher.MyEntity)
+    log.Println("*******************************************************************real_entity:", realEntity)
+    log.Println("*******************************************************************real_entity.DSGeneratedID:", realEntity.DSGeneratedID)
+
+    if realEntity.DSGeneratedID != 0 {
+      if err := client.Get(ctx, key, &realEntity); err != datastore.ErrNoSuchEntity {
+        realEntity.DSGeneratedID = 0
+        log.Println("*******************************************************************Fatalln:", err)
+      }
+    } else {
+      log.Println("*******************************************************************ctx:", ctx)
+      log.Println("*******************************************************************key:", key)
+      log.Println("*******************************************************************real_entity:", realEntity)
+      log.Println("*******************************************************************ns:", d.KindName)
+      log.Println("*******************************************************************kind:", utilities.ConfigValues.GDS_Default_Namespace)
+      completeKey, err := client.Put(ctx, key, &realEntity)
+      if err != nil {
+        log.Fatalf("Failed to save My entity to GDS: %v", err)
+      }
+      realEntity.DSGeneratedID = completeKey.ID                                                                              //pls look into why DS_GeneratedID won't work
+      log.Printf("Saved My Entity\n %+v\n", completeKey)
+    }
+    client.Close()
+    return realEntity
+  default:
+    log.Println("The entity that is sent in not one of the GDS Entities")
+    log.Println("V was", v)
+  }
+  return nil
+}
+
+
+
+
+
+
+
