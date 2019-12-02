@@ -1,0 +1,26 @@
+theJson := `{
+    "hostname": "jdshgjdsh832748",
+    "time": 1575284602075,
+    "timeTaken": "89 ms",
+    "status": "SUCCESS",
+    "data": {
+        "userName": "luqidas",
+        "sessionID": "bu52nmctkit2khh47bq213v8s2"
+    }
+}`
+
+type Response struct {
+  Hostname      string           `json:"hostname"`
+  Time          int64            `json:"time"`
+  TimeTaken     string           `json:"timeTaken"`
+  Status        string           `json:"status"`
+  Data          struct {
+      UserName    string         `json:"userName"`
+      SessionID   string         `json:"sessionID"`
+  }                              `json:"data"`
+}
+
+response := Response{}
+json.Unmarshal([]byte(theJson), &response)
+log.Println(response.Hostname)
+log.Println(response.Data.SessionID)
