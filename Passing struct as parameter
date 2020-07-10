@@ -1,0 +1,25 @@
+package main
+
+import "fmt"
+
+type MyClass struct {
+    Name string
+}
+
+func main() {
+    cls := MyClass{Name: "Jhon"}
+
+    // Both calls below produce same result
+    cls.StructMethod()  // "Jhon"
+    FuncPassStruct(cls) // "Jhon"
+}
+
+// Method on struct type
+func (class MyClass) StructMethod() {
+    fmt.Println(class.Name)
+}
+
+// Function that takes struct type as the parameter
+func FuncPassStruct(class MyClass) {
+    fmt.Println(class.Name)
+}
