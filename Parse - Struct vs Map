@@ -26,7 +26,7 @@ import (
 )
 
 type Entity struct {
-  TotalRequests int `json:"total_requests"`
+  TotalRequests int `json:"total_requests"`                                                           //TotalRequests should start with uppercase
   Status string `json:"status"`
   TeamName string `json:"team_name"`
 }
