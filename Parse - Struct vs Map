@@ -1,0 +1,72 @@
+Input:
+
+[
+   {
+      "total_requests":3,
+      "status":"Canceled",
+      "team_name":"ABCD"
+   },
+   {
+      "total_requests":60,
+      "status":"Created",
+      "team_name":"lyc"
+   }
+]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Code:
+package main
+
+import (
+  "encoding/json"
+  "fmt"
+  "io/ioutil"
+  "net/http"
+)
+
+type Entity struct {
+  TotalRequests int `json:"total_requests"`
+  Status string `json:"status"`
+  TeamName string `json:"team_name"`
+}
+
+//using map
+func sendReport1(List []byte){
+  var flexUpResults []map[string]interface{}
+  json.Unmarshal(List, &Results)
+  fmt.Println("1 ================>", string(List))
+  fmt.Println("2 ================>", Results)
+}
+
+//using struct
+func sendReport2(List []byte){
+  entities := []Entity{}
+  err := json.Unmarshal(List, &entities)
+  if err != nil {}")
+  fmt.Println("5 ================>", string(List))
+  fmt.Println("6 ================>", entities)
+  for _, v := range entities {
+    fmt.Println(v.status)
+  }
+}
+
+func main() {
+  const u = "https://......?state=Complete&group=status,team_name&start="
+  Url := fmt.Sprintf("%s%s&end=%s&", Url, "2020-07-15", "2020-07-16")
+  Response, err1 := http.Get(Url)
+  List, _ := ioutil.ReadAll(Response.Body)
+  if err1 != nil {}
+  sendReport1(List)
+  sendReport2(List)
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Output:
+1 ================> [{"total_requests":1,"status":"Failed","team_name":"BE"},{"total_requests":1,"status":"Success","team_name":"lye"}]
+2 ================> [map[status:Failed team_name:RE total_requests:1] map[status:Success team_name:lye total_requests:1] ]
+5 ================> [{"total_requests":1,"status":"Failed","team_name":"BE"},{"total_requests":1,"status":"Success","team_name":"lye"}]
+6 ================> [{1 Failed RE} {1 Success lye}]
+{1 Failed RE}
+{1 Success lye}
