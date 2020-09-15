@@ -1,0 +1,5 @@
+import (
+	"github.paypal.com/a/b/configs"
+)
+//vmconfig.go is a file in configs folder and that file has a vasr called 'TagForcedDecomm' and for you to use it in this file
+tagForcedDecomm := configs.TagForcedDecomm
