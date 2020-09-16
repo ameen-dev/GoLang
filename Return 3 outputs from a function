@@ -1,0 +1,20 @@
+func funcB(a int, logger *log.Logger) (map[string]string, map[string]string, error) {
+
+	runHosts := hosts
+	var responses map[string]string
+	var failures map[string]string
+	var tmp map[string]string
+	var err error
+	if err != nil {
+		logger.WithError(err).Errorf("failed to execute command with error")
+	}
+
+	return responses, failures, err
+}
+
+func main(){
+  	var failures map[string]string
+	  var tmp map[string]string
+	  var err error
+		tmp, failures, err = funcB(5, logger)
+}   
